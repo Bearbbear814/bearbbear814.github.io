@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🧸 Kuma List</title>
+<link
+  href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  body {
+    font-family: 'Baloo 2', cursive;
+    background-color: #fff1f4;
+    color: #5c3c35;
+    padding: 2em;
+  }
+  h1 {
+    text-align: center;
+    font-size: 3em;
+    color: #e07a9c;
+    margin-bottom: 0.5em;
+  }
+  .controls,
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  select,
+  input[type='text'],
+  input[type='date'],
+  button {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 1px solid #eabfbf;
+    background-color: #fff9f9;
+  }
+  button {
+    border: none;
+    background-color: #ffc5d9;
+    color: #5c3c35;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover {
+    background-color: #f5a9b8;
+  }
+  ul {
+    list-style: none;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0;
+  }
+  li {
+    background: #fff7f3;
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .task-info {
+    flex: 1;
+  }
+  .task-text {
+    font-size: 18px;
+  }
+  .task-subject {
+    font-weight: bold;
+    margin-right: 8px;
+  }
+  .task-status {
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  .due-date {
+    font-size: 0.9em;
+    color: #a68181;
+    margin-top: 4px;
+  }
+  .status-pending {
+    color: #f28b82; /* Pastel Red */
+  }
+  .status-progress {
+    color: #fdd663; /* Pastel Yellow */
+  }
+  .status-completed {
+    color: #a5d6a7; /* Pastel Green */
+    text-decoration: line-through;
+  }
+  .status-buttons button {
+    margin: 2px;
+    padding: 6px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  .status-buttons button.pending {
+    background-color: #f28b82;
+    color: white;
+  }
+  .status-buttons button.progress {
+    background-color: #fdd663;
+    color: #5c3c35;
+  }
+  .status-buttons button.completed {
+    background-color: #a5d6a7;
+    color: white;
+  }
+  .calendar {
+    max-width: 700px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+  .calendar div {
+    padding: 10px;
+    border: 1px solid #eabfbf;
+    border-radius: 8px;
+    min-height: 60px;
+    position: relative;
+    background-color: #fff9f9;
+    font-size: 0.9em;
+    color: #5c3c35;
+  }
+  .calendar .header {
+    font-weight: bold;
+    text-align: center;
+    background-color: #f5a9b8;
+    color: white;
+  }
+  .today {
+    border: 2px solid #e07a9c;
+  }
+  .due-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #e07a9c;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+  }
+  .due-task-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background-color: #e07a9c;
+    border-radius: 50%;
+    margin-left: 4px;
+  }
+  .music-player {
+    text-align: center;
+    margin: 30px auto;
+  }
+  .music-player button {
+    background-color: #e0b0c7;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  .music-player button:hover {
+    background-color: #d291bc;
+  }
+</style>
+</head>
+<body>
+  <h1>🧸 Kuma List</h1>
+
+  <div class="controls">
+    <select id="subjectSelect" title="Select Subject">
+      <option value="math">🧮 Math</option>
+      <option value="science">🔬 Science</option>
+      <option value="english">📖 English</option>
+      <option value="chinese">🇨🇳 Chinese</option>
+      <option value="others">🗂️ Others</option>
+      <option value="art">🎨 Art</option>
+      <option value="music">🎵 Music</option>
+      <option value="geography">🗺️ Geography</option>
+      <option value="history">📜 History</option>
+      <option value="literature">📚 Literature</option>
+    </select>
+
+    <input type="text" id="taskInput" placeholder="Enter task..." title="Task description" />
+    <input type="date" id="dueDateInput" title="Due Date" />
+    <select id="statusSelect" title="Task Status">
+      <option value="pending">🟥 Pending</option>
+      <option value="progress">🟨 In Progress</option>
+      <option value="completed">✅ Completed</option>
+    </select>
+
+    <button id="addTaskBtn" title="Add Task">Add Task</button>
+  </div>
+
+  <div class="filters">
+    <select id="filterSubject" title="Filter by Subject">
+      <option value="">-- All Subjects --</option>
+      <option value="math">🧮 Math</option>
+      <option value="science">🔬 Science</option>
+      <option value="english">📖 English</option>
+      <option value="chinese">🇨🇳 Chinese</option>
+      <option value="others">🗂️ Others</option>
+      <option value="art">🎨 Art</option>
+      <option value="music">🎵 Music</option>
+      <option value="geography">🗺️ Geography</option>
+      <option value="history">📜 History</option>
+      <option value="literature">📚 Literature</option>
+    </select>
+
+    <select id="filterStatus" title="Filter by Status">
+      <option value="">-- All Statuses --</option>
+      <option value="pending">🟥 Pending</option>
+      <option value="progress">🟨 In Progress</option>
+      <option value="completed">✅ Completed</option>
+    </select>
+  </div>
+
+  <ul id="taskList" aria-live="polite" aria-label="Task list"></ul>
+
+  <section aria-label="Due date calendar" id="calendar" class="calendar"></section>
+
+  <div class="music-player">
+    <button id="musicToggleBtn" aria-pressed="false" aria-label="Toggle Rainy Café Music">
+      Play Rainy Café Music 🧸
+    </button>
+    <audio id="rainAudio" loop>
+      <source src="audio/rain.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <p>(Click the button to play/pause music)</p>
+  </div>
+
+  <script>
+    // Elements
+    const taskInput = document.getElementById('taskInput');
+    const dueDateInput = document.getElementById('dueDateInput');
+    const subjectSelect = document.getElementById('subjectSelect');
+    const statusSelect = document.getElementById('statusSelect');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskListEl = document.getElementById('taskList');
+    const filterSubject = document.getElementById('filterSubject');
+    const filterStatus = document.getElementById('filterStatus');
+    const calendarEl = document.getElementById('calendar');
+    const musicBtn = document.getElementById('musicToggleBtn');
+    const rainAudio = document.getElementById('rainAudio');
+
+    let isPlaying = false;
+
+    // Music toggle
+    musicBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        rainAudio.pause();
+        musicBtn.textContent = 'Play Rainy Café Music 🧸';
+        musicBtn.setAttribute('aria-pressed', 'false');
+      } else {
+        rainAudio.play();
+        musicBtn.textContent = 'Pause Music 🧸';
+        musicBtn.setAttribute('aria-pressed', 'true');
+      }
+      isPlaying = !isPlaying;
+    });
+
+    // Status labels & classes
+    const stateLabels = {
+      pending: '🟥 Pending',
+      progress: '🟨 In Progress',
+      completed: '✅ Completed'
+    };
+
+    const stateColors = {
+      pending: 'status-pending',
+      progress: 'status-progress',
+      completed: 'status-completed'
+    };
+
+    // Load tasks from localStorage
+    function getTasks() {
+      return JSON.parse(localStorage.getItem('kuma-tasks')) || [];
+    }
+
+    // Save tasks to localStorage
+    function saveTasks(tasks) {
+      localStorage.setItem('kuma-tasks', JSON.stringify(tasks));
+    }
+
+    // Add new task
+    addTaskBtn.addEventListener('click', () => {
+      const text = taskInput.value.trim();
+      const dueDate = dueDateInput.value;
+      const subject = subjectSelect.value;
+      const status = statusSelect.value;
+
+      if (!text) {
+        alert('Please enter a task description.');
+        return;
+      }
+      if (!dueDate) {
+        alert('Please select a due date.');
+        return;
+      }
+
+      const tasks = getTasks();
+      tasks.push({ text, dueDate, subject, status });
+      saveTasks(tasks);
+      taskInput.value = '';
+      dueDateInput.value = '';
+      renderAll();
+    });
+
+    // Update status on task buttons
+    function updateTaskStatus(index, newStatus) {
+      const tasks = getTasks();
+      tasks[index].status = newStatus;
+      saveTasks(tasks);
+      renderAll();
+    }
+
+    // Delete task
+    function deleteTask(index) {
+      if (!confirm('Delete this task?')) return;
+      const tasks = getTasks();
+      tasks.splice(index, 1);
+      saveTasks(tasks);
+      renderAll();
+    }
+
+    // Render task list based on filters
+    function renderTasks() {
+      const tasks = getTasks();
+      taskListEl.innerHTML = '';
+
+      const filtered = tasks.filter(t => {
+        return (
+          (filterSubject.value === '' || t.subject === filterSubject.value) &&
+          (filterStatus.value === '' || t.status === filterStatus.value)
+        );
+      });
+
+      if (filtered.length === 0) {
+        taskListEl.innerHTML = '<li>No tasks found.</li>';
+        return;
+      }
+
+      filtered.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.classList.add(stateColors[task.status]);
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'task-info';
+
+        const subjectSpan = document.createElement('span');
+        subjectSpan.className = 'task-subject';
+        subjectSpan.textContent = subjectEmoji(task.subject) + ' ' + capitalize(task.subject);
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'task-text';
+        textSpan.textContent = task.text;
+
+        const dueSpan = document.createElement('div');
+        dueSpan.className = 'due-date';
+        dueSpan.textContent = 'Due: ' + formatDate(task.dueDate);
+
+        const statusSpan = document.createElement('div');
+        statusSpan.className = 'task-status';
+        statusSpan.textContent = stateLabels[task.status];
+
+        infoDiv.appendChild(subjectSpan);
+        infoDiv.appendChild(textSpan);
+        infoDiv.appendChild(dueSpan);
+        infoDiv.appendChild(statusSpan);
+
+        li.appendChild(infoDiv);
+
+        // Status change buttons
+        const btnDiv = document.createElement('div');
+        btnDiv.className = 'status-buttons';
+
+        ['pending', 'progress', 'completed'].forEach(status => {
+          const btn = document.createElement('button');
+          btn.textContent = stateLabels[status];
+          btn.className = status;
+          if (task.status === status) btn.disabled = true;
+          btn.title = 'Set status to ' + statusLabels(status);
+          btn.addEventListener('click', () => updateTaskStatus(index, status));
+          btnDiv.appendChild(btn);
+        });
+
+        // Delete button
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '🗑️ Delete';
+        delBtn.title = 'Delete task';
+        delBtn.style.backgroundColor = '#f28b82';
+        delBtn.style.color = 'white';
+        delBtn.addEventListener('click', () => deleteTask(index));
+        btnDiv.appendChild(delBtn);
+
+        li.appendChild(btnDiv);
+        taskListEl.appendChild(li);
+      });
+    }
+
+    // Capitalize first letter
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Status label in readable text
+    function statusLabels(status) {
+      if (status === 'pending') return 'Pending';
+      if (status === 'progress') return 'In Progress';
+      if (status === 'completed') return 'Completed';
+      return status;
+    }
+
+    // Format date nicely
+    function formatDate(dateStr) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      const dateObj = new Date(dateStr + 'T00:00:00');
+      return dateObj.toLocaleDateString(undefined, options);
+    }
+
+    // Return emoji for subjects
+    function subjectEmoji(subject) {
+      const map = {
+        math: '🧮',
+        science: '🔬',
+        english: '📖',
+        chinese: '🇨🇳',
+        others: '🗂️',
+        art: '🎨',
+        music: '🎵',
+        geography: '🗺️',
+        history: '📜',
+        literature: '📚'
+      };
+      return map[subject] || '❓';
+    }
+
+    // Render calendar with tasks due dates
+    function renderCalendar() {
+      calendarEl.innerHTML = '';
+
+      // Weekday headers
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      days.forEach(day => {
+        const header = document.createElement('div');
+        header.className = 'header';
+        header.textContent = day;
+        calendarEl.appendChild(header);
+      });
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+
+      // First day of month (0=Sun)
+      const firstDay = new Date(year, month, 1).getDay();
+      // Days in this month
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // Fill blanks before first day
+      for (let i = 0; i < firstDay; i++) {
+        const blank = document.createElement('div');
+        calendarEl.appendChild(blank);
+      }
+
+      // Get tasks for this month
+      const tasks = getTasks();
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayDiv = document.createElement('div');
+        dayDiv.textContent = day;
+
+        if (
+          day === now.getDate() &&
+          month === now.getMonth() &&
+          year === now.getFullYear()
+        ) {
+          dayDiv.classList.add('today');
+        }
+
+        // Check tasks due on this day
+        const tasksDue = tasks.filter(t => t.dueDate === dateStr);
+        if (tasksDue.length) {
+          const dot = document.createElement('div');
+          dot.className = 'due-dot';
+          dayDiv.appendChild(dot);
+
+          // Tooltip with tasks list on hover
+          dayDiv.title = tasksDue
+            .map(t => `${subjectEmoji(t.subject)} ${t.text} [${statusLabels(t.status)}]`)
+            .join('\n');
+        }
+
+        calendarEl.appendChild(dayDiv);
+      }
+    }
+
+    // Render everything
+    function renderAll() {
+      renderTasks();
+      renderCalendar();
+    }
+
+    // Filters event listeners
+    filterSubject.addEventListener('change', renderTasks);
+    filterStatus.addEventListener('change', renderTasks);
+
+    // Initial render
+    renderAll();
+  </script>
+</body>
+</html>
