@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🧸 Kuma List</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>🧸 Kuma List</h1>
+
+  <div class="controls">
+    <select id="subjectSelect" title="Select Subject">
+      <option value="math">🧮 Math</option>
+      <option value="science">🔬 Science</option>
+      <option value="english">📖 English</option>
+      <option value="chinese">🇨🇳 Chinese</option>
+      <option value="others">🗂️ Others</option>
+      <option value="art">🎨 Art</option>
+      <option value="music">🎵 Music</option>
+      <option value="geography">🗺️ Geography</option>
+      <option value="history">📜 History</option>
+      <option value="literature">📚 Literature</option>
+    </select>
+
+    <input type="text" id="taskInput" placeholder="Enter task..." title="Task description" />
+    <input type="date" id="dueDateInput" title="Due Date" />
+    <select id="statusSelect" title="Task Status">
+      <option value="pending">🟥 Pending</option>
+      <option value="progress">🟨 In Progress</option>
+      <option value="completed">✅ Completed</option>
+    </select>
+
+    <button id="addTaskBtn" title="Add Task">Add Task</button>
+  </div>
+
+  <div class="filters">
+    <select id="filterSubject" title="Filter by Subject">
+      <option value="">-- All Subjects --</option>
+      <option value="math">🧮 Math</option>
+      <option value="science">🔬 Science</option>
+      <option value="english">📖 English</option>
+      <option value="chinese">🇨🇳 Chinese</option>
+      <option value="others">🗂️ Others</option>
+      <option value="art">🎨 Art</option>
+      <option value="music">🎵 Music</option>
+      <option value="geography">🗺️ Geography</option>
+      <option value="history">📜 History</option>
+      <option value="literature">📚 Literature</option>
+    </select>
+
+    <select id="filterStatus" title="Filter by Status">
+      <option value="">-- All Statuses --</option>
+      <option value="pending">🟥 Pending</option>
+      <option value="progress">🟨 In Progress</option>
+      <option value="completed">✅ Completed</option>
+    </select>
+  </div>
+
+  <ul id="taskList" aria-live="polite" aria-label="Task list"></ul>
+
+  <section aria-label="Due date calendar" id="calendar" class="calendar"></section>
+
+  <div class="music-player">
+    <button id="musicToggleBtn" aria-pressed="false" aria-label="Toggle Rainy Café Music">
+      Play Rainy Café Music 🧸
+    </button>
+    <audio id="rainAudio" loop>
+      <source src="audio/rain.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <p>(Click the button to play/pause music)</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
